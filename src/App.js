@@ -82,7 +82,7 @@ export default function App() {
       </div>
 
       <div className="absolute bottom-0 right-0 h-2/3 w-screen -z-40">
-        <LoadScript googleMapsApiKey={process.env.GOOGLE_API_MAP_KEY}>
+        <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_API_MAP_KEY}>
           <GoogleMap
             mapContainerStyle={containerStyle}
             center={mapCenter}
