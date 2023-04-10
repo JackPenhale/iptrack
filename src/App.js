@@ -5,9 +5,8 @@ import { GoogleMap, LoadScript, MarkerF } from "@react-google-maps/api";
 export default function App() {
   const [findIp, setFindIp] = useState("");
   const [ipInfo, setIpInfo] = useState("");
-  const [mapCenter, setMapCenter] = useState({
-
-  });
+  const [ipBlocked, setIpBlocked] = useState(false);
+  const [mapCenter, setMapCenter] = useState({});
 
   useEffect(() => {
     fetch(
@@ -21,6 +20,7 @@ export default function App() {
       })
       .catch((err) => {
         console.log(err.message);
+        setIpBlocked(true);
       });
   }, []);
 
@@ -49,6 +49,7 @@ export default function App() {
       })
       .catch((err) => {
         console.log(err.message);
+        setIpBlocked(true);
       });
   };
   return (
@@ -98,15 +99,25 @@ export default function App() {
       </div>
 
       <div className="absolute bottom-0 right-0 h-2/3 w-screen -z-40">
-        <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_API_MAP_KEY}>
-          <GoogleMap
-            mapContainerStyle={containerStyle}
-            center={mapCenter}
-            zoom={12}
+        {ipBlocked && (
+          <div className="flex w-full text-center items-center justify-center text-3xl text-white pt-60 ">
+            There was an error getting the IP Address. This may have to do with
+            ad blocking software.
+          </div>
+        )}
+        {!ipBlocked && (
+          <LoadScript
+            googleMapsApiKey={process.env.REACT_APP_GOOGLE_API_MAP_KEY}
           >
-            <MarkerF position={mapCenter}></MarkerF>
-          </GoogleMap>
-        </LoadScript>
+            <GoogleMap
+              mapContainerStyle={containerStyle}
+              center={mapCenter}
+              zoom={12}
+            >
+              <MarkerF position={mapCenter}></MarkerF>
+            </GoogleMap>
+          </LoadScript>
+        )}
       </div>
     </div>
   );
