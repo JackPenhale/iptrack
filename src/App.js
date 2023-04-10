@@ -6,9 +6,23 @@ export default function App() {
   const [findIp, setFindIp] = useState("");
   const [ipInfo, setIpInfo] = useState("");
   const [mapCenter, setMapCenter] = useState({
-    lat: 39.7392,
-    lng: -104.991531,
+
   });
+
+  useEffect(() => {
+    fetch(
+      `https://geo.ipify.org/api/v2/country,city?apiKey=${process.env.REACT_APP_IP_API_KEY}`
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        setIpInfo(data);
+        setMapCenter({ lat: data.location.lat, lng: data.location.lng });
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+  }, []);
 
   const containerStyle = {
     width: "100%",
@@ -24,12 +38,14 @@ export default function App() {
   const handleClick = () => {
     console.log("yooo");
 
-    fetch(`http://ip-api.com/json/${findIp}`)
+    fetch(
+      `https://geo.ipify.org/api/v2/country,city?apiKey=${process.env.REACT_APP_IP_API_KEY}&domain=${findIp}`
+    )
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
         setIpInfo(data);
-        setMapCenter({ lat: data.lat, lng: data.lon });
+        setMapCenter({ lat: data.location.lat, lng: data.location.lng });
       })
       .catch((err) => {
         console.log(err.message);
@@ -63,14 +79,14 @@ export default function App() {
       <div className="md:h-40  h-56 w-3/4 bg-white flex flex-col md:flex-row rounded-3xl justify-center items-center text-center md:justify-around mt-12">
         <div className="flex flex-col md:text-left md:w-1/4 align-middle justify-center">
           <h2 className="font-bold text-xs text-slate-400">IP ADDRESS</h2>
-          <h2 className="font-medium text-lg">{`${ipInfo.query}`}</h2>
+          <h2 className="font-medium text-lg">{`${ipInfo.ip}`}</h2>
         </div>
         <div className="md:flex h-full justify-center align-middle items-center hidden ">
           <div className="border-l-2 h-2/3 border-slate-300" />
         </div>
         <div className="flex flex-col md:text-left md:w-1/4 align-middle justify-center pt-4 md:pt-0">
           <h2 className="font-bold text-xs text-slate-400">LOCATION</h2>
-          <h2 className="font-medium text-lg">{`${ipInfo.city}, ${ipInfo.region}`}</h2>
+          <h2 className="font-medium text-lg">{`${ipInfo.location?.city}, ${ipInfo.location?.region}`}</h2>
         </div>
         <div className="md:flex h-full justify-center align-middle items-center hidden ">
           <div className="border-l-2 h-2/3 border-slate-300" />
